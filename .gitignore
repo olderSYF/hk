@@ -1,0 +1,14 @@
+# Fortran build artifacts
+*.mod
+*.o
+*.obj
+
+# Windows DLL build artifacts
+*.dll
+*.lib
+*.pdb
+*.exp
+
+# Visual Studio
+.vs/
+*.vcxproj.user
