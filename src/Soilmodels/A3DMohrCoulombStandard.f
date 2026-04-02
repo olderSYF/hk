@@ -378,11 +378,12 @@
         call Solve3x3HB(J_A, RHS_A, dX_A, INFO_3x3)
 
         if (INFO_3x3 /= 0) then
-          ! Singular Jacobian – try a scalar update on DLAM
-          DENOM_TMP = g1_k - g3_k - (1.0d0 + h_k)*g3_k
-          if (dabs(DENOM_TMP) > 1.0d-20) then
-            DLAM = DLAM + RF_k / DENOM_TMP
-          end if
+          ! Jacobian is singular (near degenerate stress state).
+          ! Fallback: project Sp1 directly onto the yield surface while
+          ! holding Sp3 and DLAM fixed.  Since ∂RF/∂Sp1 = 1, the exact
+          ! Newton step for RF alone gives:
+          !   Sp1_new = Sp3_k + sci * phi^a   (satisfies F=0 exactly)
+          Sp1_k = Sp3_k + SCI * PHI_k**AVL
           exit
         end if
 
@@ -400,8 +401,10 @@
       if (PHI_k < 1.0d-12) PHI_k = 1.0d-12
       h_k   = AVL * AMB * PHI_k**(AVL - 1.0d0)
 
-      ! Corrected Sp2 (middle principal stress) from elastic relation:
-      !   dSp2 = -DLAM * (D2*n1 + D2*n3) = DLAM*D2*h
+      ! Corrected Sp2 (middle principal stress) from its elastic update equation:
+      !   dSp2 = -DLAM * (D2*n1 + D1*n2 + D2*n3)   [C_e : DLAM * grad_F]
+      !   n1=1, n2=0 (F does not depend on Sp2), n3=-(1+h)
+      !   dSp2 = -DLAM * D2 * (1 + (-(1+h))) = -DLAM * D2 * (-h) = +DLAM * D2 * h
       Sp1 = Sp1_k
       Sp2 = Sp2tr + DLAM * D2 * h_k
       Sp3 = Sp3_k
@@ -443,9 +446,12 @@
       !        STATEV(2) : plastic indicator (0=elastic, 1=HB, 2=tensile)
       ! ------------------------------------------------------------------
       if (IPL == 1 .and. DLAM > 0.0d0) then
-        ! Equivalent plastic strain increment (von Mises-like scalar measure)
+        ! Equivalent plastic strain increment:
+        !   dEps_eq = DLAM * ||grad_F|| = DLAM * sqrt(n1^2 + n3^2)
+        !   where n1 = dF/dSp1 = 1  and  n3 = dF/dSp3 = -(1+h)
+        !   => dEps_eq = DLAM * sqrt(1 + (1+h)^2)
         ! Only updated for HB yield (IPL=1); tensile apex (IPL=2) skipped
-        ! since DLAM is not defined via NR in that path.
+        ! since DLAM is not computed via NR in that path.
         PHI_fin = AMB * Sp3 / SCI + SVL
         if (PHI_fin < 1.0d-12) PHI_fin = 1.0d-12
         h_fin = AVL * AMB * PHI_fin**(AVL - 1.0d0)

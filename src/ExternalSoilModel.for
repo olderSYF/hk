@@ -208,8 +208,10 @@ implicit none
     props(2) = MatParams(IDSet)%PoissonRatio           ! Poisson ratio nu
     props(3) = MatParams(IDSet)%FrictionAngle          ! sigma_ci (GiD "Friction Angle" field, raw value in kPa)
     props(4) = MatParams(IDSet)%Cohesion               ! GSI      (GiD "Cohesion" field, raw value)
-    !           NOTE: if %Cohesion is not defined in your Anura3D version use:
+    !           MatParams%Cohesion is the standard field name in Anura3D 2025.
+    !           If your build reports an undefined member, use instead:
     !           props(4) = MatParams(IDSet)%ESM_Solid(4)
+    !           (ESM_Solid holds the raw GiD values as-read from the .GOM file.)
     props(5) = MatParams(IDSet)%DilatancyAngle         ! mi       (GiD "Dilatancy Angle" field, raw value)
     props(6) = MatParams(IDSet)%TensileStrength        ! D        (GiD "Tensile Strength" field)
     cmname = UMAT_MOHR_COULOMB_STANDARD
