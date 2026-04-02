@@ -65,7 +65,11 @@ Sign convention: compression positive (consistent with Anura3D).
 
 ## Troubleshooting
 
-### `LNK2019: unresolved external symbol FEXIST`
+### `LNK1120: 1 个无法解析的外部命令` / `LNK2019: unresolved external symbol FEXIST`
+
+> `LNK1120` is the **summary** error — it simply counts how many unresolved
+> symbols remain. Fix the underlying `LNK2019` error(s) below and `LNK1120`
+> disappears automatically.
 
 This error is **not caused by this repository's code**. `FEXIST` is a non-standard
 Intel Fortran extension (file-existence check) used elsewhere in the Anura3D
@@ -113,9 +117,22 @@ Intel Fortran paths.
 
 ### `LNK4272: library machine type 'x86' conflicts with target machine type 'x64'`
 
-This means one or more linked libraries (commonly HDF5) were built for 32-bit
-while the Anura3D project targets 64-bit. Replace the x86 `.lib` files with
-their x64 equivalents, or switch the project platform to match.
+This means one or more linked libraries were built for 32-bit (x86) while the
+Anura3D project targets 64-bit (x64). The most common culprit is **HDF5**.
+
+**Fix:**
+
+1. Check which `.lib` files trigger the warning (the full linker output names
+   the offending library, e.g. `hdf5.lib`).
+2. Replace the x86 `.lib` (and `.dll`) with the **x64 build** of the same
+   library. For HDF5, download the 64-bit binaries from
+   [The HDF Group](https://www.hdfgroup.org/downloads/hdf5/) and copy the
+   `lib/` and `bin/` contents into Anura3D's library directory.
+3. Verify the project platform is set to **x64** in Visual Studio
+   (**Build → Configuration Manager → Active solution platform → x64**).
+4. If you also see `LNK2019: FEXIST` at the same time, fix **both** issues:
+   the x86/x64 mismatch (this section) **and** the missing portability
+   library (see FEXIST section above).
 
 ### `LNK4099: PDB 'hdf5.pdb' not found`
 
