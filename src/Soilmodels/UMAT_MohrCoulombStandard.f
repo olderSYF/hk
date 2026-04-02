@@ -1,6 +1,3 @@
-!DEC$ ATTRIBUTES DLLEXPORT, ALIAS:"UMAT" :: UMAT
-      INCLUDE 'ABA_PARAM.INC'
-
 !**********************************************************************
 !  UMAT_MohrCoulombStandard.f
 !  Hoek-Brown constitutive model for Anura3D (MPM) via ESM "借壳" approach
