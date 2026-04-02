@@ -28,7 +28,7 @@
 !  Integration:
 !    1. Replace src/ExternalSoilModel.for in your Anura3D source tree
 !    2. Replace src/Soilmodels/A3DMohrCoulombStandard.f
-!    3. Add src/Soilmodels/UMAT_MohrCoulombStandard.f to the project
+!    3. Clean build (delete all .obj/.mod in the output directory)
 !    4. Rebuild the Anura3D solution
 !**********************************************************************
 

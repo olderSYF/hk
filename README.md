@@ -27,15 +27,16 @@ to pass raw HB parameters directly to a custom UMAT, avoiding the standard
 | File | Purpose |
 |------|---------|
 | `src/ExternalSoilModel.for` | Module `ModExternalSoilModel` — replaces stock Anura3D file. Only the MC branch props assignment is modified. |
-| `src/Soilmodels/A3DMohrCoulombStandard.f` | Module `ModMohrCoulomb` with `ESM_MC` — replaces stock file. Calls our external UMAT. |
-| `src/Soilmodels/UMAT_MohrCoulombStandard.f` | Standalone `SUBROUTINE UMAT` implementing the generalized Hoek-Brown criterion (2002), plus helper `CarSig`. |
+| `src/Soilmodels/A3DMohrCoulombStandard.f` | Module `ModMohrCoulomb` with `ESM_MC`, `UMAT` (Hoek-Brown), and `CarSig` — replaces stock file. |
 
 ## Integration into Anura3D
 
 1. **Replace** `src/ExternalSoilModel.for` in your Anura3D source tree with the version from this repo.
 2. **Replace** `src/Soilmodels/A3DMohrCoulombStandard.f` with the version from this repo.
-3. **Add** `src/Soilmodels/UMAT_MohrCoulombStandard.f` to the Anura3D Visual Studio project.
+3. **Clean build**: delete all `.obj` and `.mod` files in the output directory (stale artifacts cause `LNK2019` errors).
 4. **Rebuild** the Anura3D solution.
+
+> **Note:** The UMAT and CarSig subroutines are now inside the `ModMohrCoulomb` module (no separate file needed). This eliminates `LNK2019: unresolved external symbol UMAT` linker errors.
 
 ### GOM-file setup
 
