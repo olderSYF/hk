@@ -69,17 +69,47 @@ Sign convention: compression positive (consistent with Anura3D).
 
 This error is **not caused by this repository's code**. `FEXIST` is a non-standard
 Intel Fortran extension (file-existence check) used elsewhere in the Anura3D
-codebase. It is provided by the Intel Fortran **Portability library**.
+codebase. It is provided by the Intel Fortran **Portability library** (`libifport`).
 
-**Fix:** In Visual Studio, add the portability library to the linker inputs:
+**Fix — recommended:** Always build from an **Intel oneAPI / Intel Fortran
+command prompt** (or run `setvars.bat` first). This sets all library search
+paths automatically, and the linker will find `libifport.lib` without any
+manual configuration:
 
-1. Right-click the Anura3D project → **Properties** → **Linker** → **Input**
-2. Add `libifport.lib` (Release) or `libifportd.lib` (Debug) to
-   **Additional Dependencies**
+```bat
+:: Open "Intel oneAPI command prompt for Intel 64" from the Start Menu, or:
+"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" intel64
+```
 
-Alternatively, ensure your Intel Fortran installation's `lib` directory
-(e.g. `C:\Program Files (x86)\Intel\oneAPI\compiler\latest\lib`) is in
-**Linker → General → Additional Library Directories**.
+**Fix — manual (Visual Studio):**
+
+1. Right-click the Anura3D project → **Properties** → **Fortran** →
+   **Libraries** → **Runtime Library** — set to
+   **Debug Multithread DLL** (`/libs:dll /dbglibs`) for Debug, or
+   **Multithread DLL** (`/libs:dll`) for Release. This tells Intel Fortran
+   to link its portability library automatically.
+2. If the above is not sufficient, explicitly add the Intel Fortran `lib`
+   directory to **Linker → General → Additional Library Directories**.
+   Typical paths:
+   - oneAPI: `C:\Program Files (x86)\Intel\oneAPI\compiler\latest\lib`
+   - Classic: `C:\Program Files (x86)\Intel\oneAPI\compiler\latest\windows\lib\intel64`
+
+### `LNK1181: cannot open input file "libifportd.lib"`
+
+This means the Intel Fortran **Portability library** is referenced but the
+linker cannot find it on the search path. This often happens when building
+from a plain Visual Studio Developer Command Prompt that does not include
+Intel Fortran paths.
+
+**Fix (any of these):**
+
+1. **Use the Intel oneAPI command prompt** (or run `setvars.bat intel64`
+   before building). This is the simplest and most reliable fix.
+2. Add the Intel Fortran `lib` directory to **Linker → General →
+   Additional Library Directories** (see paths above).
+3. Copy `libifportd.lib` / `libifport.lib` from your Intel compiler's
+   `lib` directory into the Anura3D project's library folder — this is
+   a last-resort workaround.
 
 ### `LNK4272: library machine type 'x86' conflicts with target machine type 'x64'`
 
