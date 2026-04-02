@@ -1,6 +1,7 @@
 !**********************************************************************
 !  UMAT_MohrCoulombStandard.f
-!  Hoek-Brown constitutive model for Anura3D (MPM) via ESM "借壳" approach
+!  Hoek-Brown constitutive model for Anura3D (MPM) via ESM
+!  "借壳 (shell borrowing)" approach
 !
 !  PROPS mapping (passed from ExternalSoilModel.for via MC channel):
 !    PROPS(1) = G        -- shear modulus
@@ -221,8 +222,8 @@
       STATEV(1) = epsp_new
       STATEV(2) = dble(plastic_flag)
 
-      ! Sig2 stays the same (no plastic correction on intermediate principal stress
-      ! in standard HB return mapping)
+      ! Sig2 stays the same (no plastic correction on intermediate principal
+      ! stress in standard HB return mapping)
       call CarSig(Sig1_new, Sig2, Sig3_new, xN1, xN2, xN3, NTENS, SigC)
 
       do i = 1, NTENS

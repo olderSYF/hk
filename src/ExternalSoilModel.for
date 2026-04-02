@@ -1,7 +1,9 @@
 !**********************************************************************
 !  ExternalSoilModel.for
 !
-!  Anura3D external soil model module — modified for Hoek-Brown 借壳法.
+!  Anura3D external soil model module — modified for Hoek-Brown
+!  借壳法 (shell borrowing method): reuses the MC parameter channel
+!  to pass raw Hoek-Brown parameters to a custom UMAT.
 !
 !  Compatible with Anura3D v2024 / v2025.
 !  Based on the Anura3D MPM framework (LGPL v3).
