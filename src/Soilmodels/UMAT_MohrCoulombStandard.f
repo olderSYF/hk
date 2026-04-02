@@ -270,22 +270,3 @@
 
       return
       end subroutine CarSig
-
-!**********************************************************************
-!  MatTranspose: Transpose a 3x3 matrix (standalone version)
-!  Retained for potential use in future extensions (e.g., rotating the
-!  elastic stiffness tensor into the material frame). Not called in the
-!  current HB implementation.
-!**********************************************************************
-      Subroutine MatTranspose(A, AT)
-      implicit double precision (a-h, o-z)
-      double precision, intent(in)  :: A(3,3)
-      double precision, intent(out) :: AT(3,3)
-      integer :: i, j
-      do i = 1, 3
-        do j = 1, 3
-          AT(i,j) = A(j,i)
-        end do
-      end do
-      return
-      end subroutine MatTranspose
