@@ -111,9 +111,10 @@
       end do
 
 !---Compute principal stresses of trial stress
-!   PrnSig(mode, NTENS, SigVoigt, xN1, xN2, xN3, Sig1, Sig2, Sig3, P, Q)
+!   PrnSig(IOpt, S, xN1, xN2, xN3, S1, S2, S3, P, Q)
+!   from Anura3D framework (src/GetPrinStress.FOR)
 !   Returns Sig1 <= Sig2 <= Sig3 (Sig3 = most compressive, compression positive)
-      call PrnSig(1, NTENS, SigE, xN1, xN2, xN3, Sig1, Sig2, Sig3, P, Q)
+      call PrnSig(1, SigE, xN1, xN2, xN3, Sig1, Sig2, Sig3, P, Q)
 
 !---Evaluate Hoek-Brown yield function
 !   F = Sig3 - Sig1 - sigci*(mb*Sig1/sigci + s)^a
@@ -233,10 +234,7 @@
 
 !**********************************************************************
 !  CarSig: Transform principal stresses back to Cartesian (Voigt) form
-!  (standalone version, outside module, for use by UMAT)
-!  NOTE: A module-internal version also exists in A3DMohrCoulombStandard.f.
-!  Both are needed because UMAT is a standalone subroutine (outside any module)
-!  and cannot access module-private procedures.
+!  Standalone subroutine for use by UMAT (which is outside any module).
 !**********************************************************************
       Subroutine CarSig(Sig1, Sig2, Sig3, xN1, xN2, xN3, ntens, SigC)
       implicit double precision (a-h, o-z)
