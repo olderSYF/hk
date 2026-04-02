@@ -134,6 +134,53 @@ Anura3D project targets 64-bit (x64). The most common culprit is **HDF5**.
    the x86/x64 mismatch (this section) **and** the missing portability
    library (see FEXIST section above).
 
+### `setvars.bat has already been run. Skipping re-execution.`
+
+This is a **harmless informational warning**, not an error. It means you already
+launched an Intel oneAPI command prompt (or ran `setvars.bat` earlier in the same
+session). The Intel Fortran environment is correctly configured — just proceed
+with the build.
+
+If you need to force a re-initialization (rarely needed), run:
+
+```bat
+setvars.bat --force intel64
+```
+
+### `MSB4078: 项目文件"Anura3D.vfproj"不受 MSBuild 支持` / `.vfproj is not supported by MSBuild`
+
+Running `msbuild Anura3D.sln` appears to succeed with 0 errors, but **nothing
+is actually compiled** (build finishes in ~0.05 s). The warning means plain
+`msbuild.exe` does not know how to process `.vfproj` (Intel Visual Fortran
+project) files — it silently skips them.
+
+**Fix — use `devenv` instead of `msbuild`:**
+
+`devenv.com` is the Visual Studio command-line build tool. Unlike `msbuild`, it
+loads all VS extensions including the Intel Fortran integration and can compile
+`.vfproj` projects:
+
+```bat
+:: 1. Open an Intel oneAPI command prompt (or run setvars.bat first)
+"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" intel64
+
+:: 2. Build with devenv (replace path to devenv.com as needed)
+devenv Anura3D.sln /Rebuild "Release|x64"
+```
+
+> **Note:** `devenv.com` is typically located at
+> `C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com`
+> (adjust the VS version and edition as appropriate).
+
+**Alternative — build from the Visual Studio IDE:**
+
+1. Install **Visual Studio** (2019 or 2022) with C++ desktop workload.
+2. Install **Intel oneAPI Base + HPC Toolkit** (this adds the Fortran compiler
+   and the VS integration for `.vfproj`).
+3. Open `Anura3D.sln` in Visual Studio.
+4. Select **Release | x64** in the toolbar.
+5. **Build → Rebuild Solution**.
+
 ### `LNK4099: PDB 'hdf5.pdb' not found`
 
 This is a harmless warning — the HDF5 library was built without debug symbols.
