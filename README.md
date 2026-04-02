@@ -63,6 +63,36 @@ Derived parameters:
 
 Sign convention: compression positive (consistent with Anura3D).
 
+## Troubleshooting
+
+### `LNK2019: unresolved external symbol FEXIST`
+
+This error is **not caused by this repository's code**. `FEXIST` is a non-standard
+Intel Fortran extension (file-existence check) used elsewhere in the Anura3D
+codebase. It is provided by the Intel Fortran **Portability library**.
+
+**Fix:** In Visual Studio, add the portability library to the linker inputs:
+
+1. Right-click the Anura3D project → **Properties** → **Linker** → **Input**
+2. Add `libifport.lib` (Release) or `libifportd.lib` (Debug) to
+   **Additional Dependencies**
+
+Alternatively, ensure your Intel Fortran installation's `lib` directory
+(e.g. `C:\Program Files (x86)\Intel\oneAPI\compiler\latest\lib`) is in
+**Linker → General → Additional Library Directories**.
+
+### `LNK4272: library machine type 'x86' conflicts with target machine type 'x64'`
+
+This means one or more linked libraries (commonly HDF5) were built for 32-bit
+while the Anura3D project targets 64-bit. Replace the x86 `.lib` files with
+their x64 equivalents, or switch the project platform to match.
+
+### `LNK4099: PDB 'hdf5.pdb' not found`
+
+This is a harmless warning — the HDF5 library was built without debug symbols.
+It can be safely ignored or suppressed via **Linker → Command Line →
+Additional Options**: `/ignore:4099`.
+
 ## Dependencies
 
 - Anura3D v2024 or v2025 source code
